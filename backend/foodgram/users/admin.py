@@ -7,7 +7,7 @@ from .models import User, Subscription
 class UserAdmin(admin.ModelAdmin):
     """ Класс пользователя """
 
-    list_display = '__all__'
+    list_display = ('first_name', 'email', 'last_name')
     search_fields = ('username',)
     list_filter = ('username', 'email')
 

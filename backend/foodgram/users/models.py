@@ -1,6 +1,5 @@
-from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.models import AbstractUser, Group, Permission
 from django.db import models
-from django.db.models import UniqueConstraint
 
 
 class User(AbstractUser):
@@ -12,7 +11,11 @@ class User(AbstractUser):
         (USER, 'user'),
         (ADMIN, 'admin'),
     ]
-
+    username = models.CharField(
+        'username',
+        max_length=150,
+        unique=True
+    )
     email = models.EmailField(
         'email',
         max_length=254,
@@ -35,28 +38,32 @@ class User(AbstractUser):
     )
 
     role = models.CharField(
-        'Роль пользователя',
-        max_length=5,
         choices=ROLE_CHOICES,
-        default=USER,
+        max_length=10,
+        verbose_name='Роль пользователя',
+        default=USER
+    )
+    groups = models.ManyToManyField(
+        Group,
         blank=True,
+        related_name='user_groups',
+        verbose_name='groups',
+        related_query_name='user',
+    )
+    user_permissions = models.ManyToManyField(
+        Permission,
+        blank=True,
+        related_name='user_permissions',
+        verbose_name='user permissions',
+        related_query_name='user',
     )
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username', 'last_name', 'first_name', ]
 
     @property
-    def is_guest(self):
-        return self.role == self.GUEST
-
-    @property
     def is_admin(self):
-        return self.role == self.ADMIN or self.is_superuser
-
-    class Meta:
-        ordering = ('id',)
-        verbose_name = 'User'
-        verbose_name_plural = 'Users'
+        return self.role == self.ADMIN
 
     def __str__(self):
         return self.username
@@ -82,6 +89,9 @@ class Subscription(models.Model):
         verbose_name = 'Подписка'
         verbose_name_plural = 'Подписки'
         constraints = [
-            UniqueConstraint(fields=['user', 'author'],
-                             name='unique_subscription')
+            models.UniqueConstraint(fields=['user', 'author'],
+                                    name='unique_subscription')
         ]
+
+    def __str__(self):
+        return f'{self.user.username} подписан на {self.author.username}'

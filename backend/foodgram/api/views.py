@@ -1,29 +1,27 @@
 from django.contrib.auth import update_session_auth_hash
 from django.db.models import F, Sum
-from django_filters.rest_framework import DjangoFilterBackend
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
-
-from rest_framework import viewsets, status, mixins
-from rest_framework.permissions import IsAuthenticated
-from rest_framework.decorators import action
-from rest_framework.response import Response
-
+from django_filters.rest_framework import DjangoFilterBackend
 from djoser.serializers import SetPasswordSerializer
+from rest_framework import viewsets, status, mixins
+from rest_framework.decorators import action
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
 
 from recipes.models import (Tag, Recipe, Favorite,
                             ShoppingCart, IngredientInRecipe,
                             Ingredient)
 from users.models import User, Subscription
+from .filters import RecipeFilter, IngredientFilter
+from .pagination import CustomPagination
+from .permissions import IsAuthorOrAdminOrReadOnly
 from .serializers import (IngredientSerializer, TagSerializer,
                           RecipeGetSerializer, FavoriteSerializer,
                           RecipePostSerializer, RecipeShortSerializer,
                           ShoppingCartSerializer, UserGetSerializer,
                           UserPostSerializer, SubscriptionSerializer,
                           UserWithRecipesSerializer)
-from .filters import RecipeFilter, IngredientFilter
-from .permissions import IsAuthorOrAdminOrReadOnly
-from .pagination import CustomPagination
 
 
 def post_and_delete_action(self,
@@ -88,28 +86,7 @@ class CustomUserViewSet(
     mixins.RetrieveModelMixin,
     viewsets.GenericViewSet,
 ):
-    """
-    Управление пользователями и подписками.
-    Эндпоинты:
-    /api/users/
-    GET запрос: полусить список всех зарегистрированных пользователей
-    Подключена пагинация.
-    POST запрос: создать нового пользователя. Доступно всем.
-    /api/users/{id}
-    GET запрос: профиля пользователя. Доступно только авторизованным.
-    /api/users/me
-    GET запрос: профиль текущего пользователя. Доступно только авторизованным.
-    /api/users/set_password/
-    POST запрос: смена пароля. Доступно только авторизованным.
-    /api/users/subscriptions/
-    GET запрос: Возвращает пользователей, на которых
-    подписан текущий пользователь.
-    Только авторизованным. В выдачу подключены рецепты с возможностью
-    установить лимит на их колличество.
-    /api/users/{id}/subscribe/
-    POST запрос: подписаться на пользователя. Только авторизованным.
-    DELETE запрос: отписаться от пользователя.
-    """
+    """ Управление пользователями и подписками """
 
     queryset = User.objects.all()
     pagination_class = CustomPagination
@@ -199,50 +176,27 @@ class CustomUserViewSet(
 
 
 class IngredientViewSet(viewsets.ReadOnlyModelViewSet):
-    """Эндпоинт  api/ingredients/.
-    GET запрос: Получение списка всех ингредиентов с
-    возможностью поиска по name.
-    Эндпоинт  api/ingredients/id.
-    GET запрос: получение ингредиента по id
-    Права доступа: Доступно без токена.
-    """
+    """ Получение списка всех ингредиентов ,
+        Получение ингредиента по id """
     queryset = Ingredient.objects.all()
     serializer_class = IngredientSerializer
-    filter_backends = (DjangoFilterBackend, )
+    filter_backends = (DjangoFilterBackend,)
     filterset_class = IngredientFilter
     pagination_class = None
 
 
 class TagViewSet(viewsets.ReadOnlyModelViewSet):
-    """Эндпоинт  api/tags/.
-    GET запрос: Получение списка всех тэгов
-    Эндпоинт  api/tags/id.
-    GET запрос: получение тэгов по id
-    Права доступа: Доступно без токена.
-    """
+    """ Получение списка всех тэгов """
     queryset = Tag.objects.all()
     serializer_class = TagSerializer
     pagination_class = None
 
 
 class RecipeViewSet(viewsets.ModelViewSet):
-    """Эндпоинт  api/recipes/.
-    GET запрос: Получение списка всех рецептов.
-    Страница доступна всем пользователям. Пагинация.
-    Доступна фильтрация по избранному, автору, списку покупок и тегам.
-    POST запрос: Создать рецепт. Доступно только авторизованному пользователю.
-    Эндпоинт  api/recipes/id.
-    GET запрос: получение рецепта по id. Доступно только авторизованным.
-    PATCH и DELETE запрос доступно только автору рецепта.
-    Эндпоинт  api/recipes/favorite.
-    POST и DEL запрос: создание и удаление подписки.
-    Доступно только авторизованному.
-    Эндпоинт api/recipes/download_shopping_cart
-    GET запрос: скачать список покупок.
-    """
+    """ Получение списка всех рецептов """
     queryset = Recipe.objects.all()
     permission_classes = [IsAuthorOrAdminOrReadOnly, ]
-    filter_backends = (DjangoFilterBackend, )
+    filter_backends = (DjangoFilterBackend,)
     filterset_class = RecipeFilter
     pagination_class = CustomPagination
 

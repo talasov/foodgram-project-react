@@ -12,12 +12,13 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.getenv('SECRET_KEY')
+#SECRET_KEY = os.getenv('SECRET_KEY')
+
+SECRET_KEY = 'django-insecure-15fp($_9tv3tp)-otc&9hn6-cb5pw4cvddq6i)*u_g4&ce&ko2'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
-
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'backend', 'db']
 
 # Application definition
 
@@ -82,6 +83,12 @@ DATABASES = {
     }
 }
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
+#     }
+# }
 
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
@@ -133,12 +140,17 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.TokenAuthentication',
     ],
+
     'DEFAULT_PAGINATION_CLASS': 'api.pagination.CustomPagination',
-    'NON_FIELD_ERRORS_KEY': 'errors',
 }
 
+# DJOSER = {
+#     'HIDE_USERS': False,
+# }
+
 DJOSER = {
-    'HIDE_USERS': False,
+    'LOGIN_FIELD': 'email',
 }
+
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
