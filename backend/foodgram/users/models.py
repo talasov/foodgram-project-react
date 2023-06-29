@@ -1,97 +1,53 @@
-from django.contrib.auth.models import AbstractUser, Group, Permission
+from django.contrib.auth.models import AbstractUser
 from django.db import models
 
 
 class User(AbstractUser):
-    """ Модель пользователя """
+    ''' Модель пользователя '''
 
-    USER = 'user'
-    ADMIN = 'admin'
-    ROLE_CHOICES = [
-        (USER, 'user'),
-        (ADMIN, 'admin'),
-    ]
-    username = models.CharField(
-        'username',
-        max_length=150,
-        unique=True
-    )
-    email = models.EmailField(
-        'email',
-        max_length=254,
-        blank=False,
-        unique=True
-    )
-    first_name = models.CharField(
-        'Имя',
-        max_length=150,
-        blank=False
-    )
-    last_name = models.CharField(
-        'Фамилия',
-        max_length=150,
-        blank=False
-    )
-    password = models.CharField(
-        'Пароль',
-        max_length=150,
-    )
+    email = models.EmailField(max_length=150, unique=True)
 
-    role = models.CharField(
-        choices=ROLE_CHOICES,
-        max_length=10,
-        verbose_name='Роль пользователя',
-        default=USER
-    )
-    groups = models.ManyToManyField(
-        Group,
-        blank=True,
-        related_name='user_groups',
-        verbose_name='groups',
-        related_query_name='user',
-    )
-    user_permissions = models.ManyToManyField(
-        Permission,
-        blank=True,
-        related_name='user_permissions',
-        verbose_name='user permissions',
-        related_query_name='user',
-    )
+    class Meta:
+        ordering = ['id']
+        verbose_name = 'Пользователь'
+        verbose_name_plural = 'Пользователи'
 
-    USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['username', 'last_name', 'first_name', ]
+    def __str__(self):
+        return self.username
 
-    @property
-    def is_admin(self):
-        return self.role == self.ADMIN
+    class Meta:
+        ordering = ['id']
+        verbose_name = 'Пользователь'
+        verbose_name_plural = 'Пользователи'
 
     def __str__(self):
         return self.username
 
 
-class Subscription(models.Model):
-    """ Подписки на авторов """
-
+class Subscribe(models.Model):
+    ''' Подписка на автора '''
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        related_name='follower',
-        verbose_name='Подписчик',
+        related_name='subscriber',
+        verbose_name='Подписчик'
     )
     author = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        related_name='following',
-        verbose_name='Автор',
+        related_name='subscribing',
+        verbose_name='Автор'
     )
+
+    def __str__(self):
+        return f'{self.user.username} подписан на {self.author.username}'
 
     class Meta:
         verbose_name = 'Подписка'
         verbose_name_plural = 'Подписки'
         constraints = [
-            models.UniqueConstraint(fields=['user', 'author'],
-                                    name='unique_subscription')
+            models.UniqueConstraint(
+                fields=['user', 'author'],
+                name='unique_subscribe'
+            )
         ]
-
-    def __str__(self):
-        return f'{self.user.username} подписан на {self.author.username}'

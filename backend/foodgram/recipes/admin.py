@@ -1,57 +1,64 @@
 from django.contrib import admin
 
-from .models import (Recipe, Tag, IngredientInRecipe,
-                     ShoppingCart, Favorite, Ingredient)
+from recipes.models import (Ingredient,
+                            Tag,
+                            Recipe,
+                            Recipe_ingredient,
+                            Favorite,
+                            Shopping_cart)
 
 
-class RecipeIngredientInline(admin.TabularInline):
-    model = IngredientInRecipe
-    min_num = 1
-    extra = 0
+@admin.register(Ingredient)
+class IngredientAdmin(admin.ModelAdmin):
+    ''' Админка Игридиента '''
 
-
-@admin.register(Recipe)
-class RecipeAdmin(admin.ModelAdmin):
-    """ Админка Рецепта """
-
-    inlines = (RecipeIngredientInline, )
-    list_display = (
-        'name', 'author', 'pub_date',
-    )
-    list_filter = ('name', 'author',)
+    list_display = ('pk', 'name', 'measurement_unit')
+    list_filter = ('name',)
     search_fields = ('name',)
 
 
 @admin.register(Tag)
 class TagAdmin(admin.ModelAdmin):
-    """ Админка Тэга """
+    ''' Админка Тэгов '''
 
-    list_display = ('pk', 'name', 'slug', 'color',)
-
-
-@admin.register(Ingredient)
-class IngredientAdmin(admin.ModelAdmin):
-    """ Админка Ингредиента """
-
-    list_display = ('pk', 'name', 'measurement_unit')
+    list_display = ('pk', 'name', 'color', 'slug')
+    list_editable = ('name', 'color', 'slug')
+    empty_value_display = '-пусто-'
 
 
-@admin.register(IngredientInRecipe)
-class IngredientInRecipeAdmin(admin.ModelAdmin):
-    """ Отображение ингредиентов и их кол-во в рецепте """
+@admin.register(Recipe)
+class RecipeAdmin(admin.ModelAdmin):
+    ''' Админка рецептов '''
 
-    list_display = ('recipe', 'ingredient', 'amount')
+    list_display = ('pk', 'name', 'author', 'in_favorites')
+    readonly_fields = ('in_favorites',)
+    list_filter = ('name', 'author', 'tags')
+    empty_value_display = '-пусто-'
+
+    @admin.display(description='В избранном')
+    def in_favorites(self, obj):
+        return obj.favorite_recipe.count()
+
+
+@admin.register(Recipe_ingredient)
+class RecipeIngredientAdmin(admin.ModelAdmin):
+    ''' Отображение ингридиентов в рецепте '''
+
+    list_display = ('pk', 'recipe', 'ingredient', 'amount')
+    list_editable = ('recipe', 'ingredient', 'amount')
 
 
 @admin.register(Favorite)
 class FavoriteAdmin(admin.ModelAdmin):
-    """ Избранные рецепты пользователей """
+    ''' Избранные рецепты '''
 
-    list_display = ('user', 'recipe')
+    list_display = ('pk', 'user', 'recipe')
+    list_editable = ('user', 'recipe')
 
 
-@admin.register(ShoppingCart)
+@admin.register(Shopping_cart)
 class ShoppingCartAdmin(admin.ModelAdmin):
-    """ Отображения списка покупок """
+    ''' Админка Корзины рецептов '''
 
-    list_display = ('user', 'recipe')
+    list_display = ('pk', 'user', 'recipe')
+    list_editable = ('user', 'recipe')

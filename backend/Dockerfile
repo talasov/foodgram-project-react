@@ -1,8 +1,8 @@
-FROM python:3.9-slim
+FROM python:3.7-slim
 
 WORKDIR /app
 
-RUN pip install gunicorn==20.1.0
+RUN pip install django-cors-headers==3.13.0
 
 COPY requirements.txt .
 

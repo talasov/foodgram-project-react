@@ -29,4 +29,4 @@ class Command(BaseCommand):
                 bar.next()
                 ingredient_create(row)
             bar.finish()
-        self.stdout.write("[!] The ingredients has been loaded successfully.")
+        self.stdout.write("[!] Ингредиенты были успешно загружены!")
