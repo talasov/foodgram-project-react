@@ -1,0 +1,20 @@
+Сайт foodgramhost.sytes.net
+ip: 158.160.7.182
+
+
+Админ:
+admin
+123
+admin@admin.ru
+
+Пользователь 1:
+name@yandex.ru
+73ufomum
+
+Пользователь 2:
+name2@yandex.ru
+73ufomum
+
+Пользователь 3:
+name3@yandex.ru
+73ufomum

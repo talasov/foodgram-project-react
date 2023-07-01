@@ -37,7 +37,7 @@ jobs:
           username: ${{ secrets.USER }}
           key: ${{ secrets.SSH_KEY }}
           passphrase: ${{ secrets.PASSPHRASE }}
-          script: |
+          #script: |
             sudo apt-get clean
             sudo npm cache clean --force
             sudo docker system prune -a --force
