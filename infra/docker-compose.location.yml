@@ -4,7 +4,6 @@ volumes:
   db_value:
   static_value:
   media_value:
-  frontend_value:
 
 services:
 
@@ -18,7 +17,9 @@ services:
 
   backend:
     container_name: foodgram_backend
-    image: talasov/foodgram_backend
+    build:
+      context: ../backend
+      dockerfile: Dockerfile
     depends_on:
       - db
     env_file:
@@ -29,24 +30,23 @@ services:
 
   frontend:
     container_name: foodgram_frontend
-    image: talasov/foodgram_frontend
+    build:
+      context: ../frontend
+      dockerfile: Dockerfile
     volumes:
-      - frontend_value:/app/build/
+      - ../frontend/:/app/result_build/
     depends_on:
       - backend
 
   nginx:
-    container_name: foodgram_gateway
-    image: talasov/foodgram_gateway
+    image: nginx:1.19.3
     ports:
-      - 80:80
-    env_file:
-      - ./.env
+      - "80:80"
     volumes:
-      - ./docs/:/usr/share/nginx/html/api/docs/
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf
+      - ../frontend/build:/usr/share/nginx/html/
+      - ../docs/:/usr/share/nginx/html/api/docs/
       - static_value:/var/html/static/
       - media_value:/var/html/media/
-      - frontend_value:/usr/share/nginx/html/
     depends_on:
       - frontend
-      - backend

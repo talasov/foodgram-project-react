@@ -38,7 +38,7 @@ class Tag(models.Model):
         validators=[
             RegexValidator(
                 '^#([a-fA-F0-9]{6})',
-                message='Введите значение цвета в формате HEX! (например: #49B64E)'
+                message='Введите значение цвета в формате HEX!'
             )
         ]
 

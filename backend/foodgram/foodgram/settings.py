@@ -7,11 +7,11 @@ load_dotenv()
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = 'django-insecure-15fp($_9tv3tp)-otc&9hn6-cb5pw4cvddq6i)*u_g4&ce&ko2'
+SECRET_KEY = os.getenv("SECRET_KEY")
 
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'backend', 'db']
+ALLOWED_HOSTS = ['localhost', '158.160.7.182', 'backend', 'db', '127.0.0.1', 'foodgramhost.sytes.net']
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -137,4 +137,3 @@ CORS_ORIGIN_ALLOW_ALL = True
 CORS_ALLOW_CREDENTIALS = True
 
 CORS_URLS_REGEX = r'^/api/.*$'
-
