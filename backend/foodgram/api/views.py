@@ -139,7 +139,9 @@ class RecipeViewSet(viewsets.ModelViewSet):
             serializer = RecipeSerializer(recipe, data=request.data,
                                           context={"request": request})
             serializer.is_valid(raise_exception=True)
-            favorite, created = Favorite.objects.get_or_create(user=request.user, recipe=recipe)
+            favorite, created = Favorite.objects.get_or_create(
+                user=request.user,
+                recipe=recipe)
             if created:
                 return Response(serializer.data,
                                 status=status.HTTP_201_CREATED)
