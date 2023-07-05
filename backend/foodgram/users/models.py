@@ -7,13 +7,16 @@ class User(AbstractUser):
 
     email = models.EmailField(max_length=150, unique=True)
 
+    USERNAME_FIELD = 'email'
+    EMAIL_FIELD = 'email'
+
     class Meta:
         ordering = ['id']
         verbose_name = 'Пользователь'
         verbose_name_plural = 'Пользователи'
 
     def __str__(self):
-        return self.username
+        return self.email
 
 
 class Subscribe(models.Model):

@@ -4,9 +4,10 @@ from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, mixins, status, viewsets
 from rest_framework.decorators import action
-from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
-
+from rest_framework.permissions import (AllowAny,
+                                        IsAuthenticated,
+                                        IsAuthenticatedOrReadOnly)
 
 from recipes.models import (Favorite,
                             Ingredient,
@@ -16,7 +17,6 @@ from recipes.models import (Favorite,
 from users.models import Subscribe, User
 from .filters import RecipeFilter
 from .pagination import CustomPaginator
-from .permissions import IsAuthorOrReadOnly
 from .serializers import (IngredientSerializer,
                           RecipeCreateSerializer,
                           RecipeReadSerializer,
@@ -120,7 +120,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
 
     queryset = Recipe.objects.all()
     pagination_class = CustomPaginator
-    permission_classes = (IsAuthorOrReadOnly,)
+    permission_classes = (IsAuthenticatedOrReadOnly,)
     filter_backends = (DjangoFilterBackend,)
     filterset_class = RecipeFilter
     http_method_names = ['get', 'post', 'patch', 'create', 'delete']
@@ -139,13 +139,13 @@ class RecipeViewSet(viewsets.ModelViewSet):
             serializer = RecipeSerializer(recipe, data=request.data,
                                           context={"request": request})
             serializer.is_valid(raise_exception=True)
-            if not Favorite.objects.filter(user=request.user,
-                                           recipe=recipe).exists():
-                Favorite.objects.create(user=request.user, recipe=recipe)
+            favorite, created = Favorite.objects.get_or_create(user=request.user, recipe=recipe)
+            if created:
                 return Response(serializer.data,
                                 status=status.HTTP_201_CREATED)
-            return Response({'errors': 'Рецепт уже в избранном.'},
-                            status=status.HTTP_400_BAD_REQUEST)
+            else:
+                return Response({'errors': 'Рецепт уже в избранном.'},
+                                status=status.HTTP_400_BAD_REQUEST)
 
         if request.method == 'DELETE':
             get_object_or_404(Favorite, user=request.user,

@@ -8,6 +8,10 @@ from recipes.models import (Ingredient,
                             Shopping_cart)
 
 
+class RecipeTagInline(admin.TabularInline):
+    model = Recipe.tags.through
+
+
 @admin.register(Ingredient)
 class IngredientAdmin(admin.ModelAdmin):
     ''' Админка Игридиента '''
@@ -34,6 +38,7 @@ class RecipeAdmin(admin.ModelAdmin):
     readonly_fields = ('in_favorites',)
     list_filter = ('name', 'author', 'tags')
     empty_value_display = '-пусто-'
+    inlines = [RecipeTagInline]
 
     @admin.display(description='В избранном')
     def in_favorites(self, obj):
