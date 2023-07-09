@@ -78,7 +78,8 @@ class UserViewSet(mixins.CreateModelMixin,
 
         if request.method == 'POST':
             # Проверяем, существует ли уже подписка
-            if Subscribe.objects.filter(user=request.user, author=author).exists():
+            if Subscribe.objects.filter(user=request.user,
+                                        author=author).exists():
                 return Response({'detail': 'Подписка уже существует'},
                                 status=status.HTTP_400_BAD_REQUEST)
 
