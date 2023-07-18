@@ -3,31 +3,6 @@
 Доступность проекта можно проверить по адресу [http://foodgramhost.sytes.net](http://foodgramhost.sytes.net/)
 - #### ip 158.160.7.182
 
-### Админ:
-```python
-admin
-123
-admin@admin.ru
-```
-
-### Авторизованные пользователи :
-- Пользователь 1:
-```python
-name@yandex.ru
-73ufomum
-```
-
-- Пользователь 2:
-```python
-name2@yandex.ru
-73ufomum
-```
-- Пользователь 3:
-```python
-name3@yandex.ru
-73ufomum
-```
-
 ## 1. Описание <a id=1></a>
 
 Проект "Продуктовый помошник" (Foodgram) предоставляет пользователям следующие возможности:
